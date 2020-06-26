@@ -1,0 +1,30 @@
+#!/bin/bash
+# Adds one-line notes to a big long text file
+# First argument is the note, second argument is a filename for it (.txt is appended) defaulting to "notes"
+# No arguments means list the last ten lines in the default file
+
+NOTES_DIR="$HOME/Documents/notes/"
+if [[ "$2" ]]
+then
+  NOTES_FILE="$2.txt"
+else
+  NOTES_FILE="notes.txt"
+fi
+NOTES_FILE="$NOTES_DIR$NOTES_FILE"
+LINES=10
+
+if [[ "$1" ]]
+then
+#  NOTE_TEXT="[$(date +'%Y-%m-%d %H:%M:%S')] $1"
+  NOTE_TEXT="$(date --iso-8601=seconds) $1"
+  # trim whitespace, remove empty lines
+  (echo "$NOTE_TEXT" | sed -r 's/^\s*(\S.*?\S)\s*$/\1/' | sed -r '/^\s*$/d') >> "$NOTES_FILE"
+  echo "Written note to $NOTES_FILE"
+  tail -n 1 "$NOTES_FILE"
+ else
+  echo "Last $LINES lines of $NOTES_FILE"
+  echo "---"
+  tail -n $LINES "$NOTES_FILE"
+  echo "---"
+fi
+
